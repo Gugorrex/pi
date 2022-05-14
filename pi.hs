@@ -1,5 +1,6 @@
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import Data.Decimal
+import System.IO
 
 
 -- input determines the start of denominator
@@ -28,11 +29,17 @@ milli = (round . (* 1000)) <$> getPOSIXTime
 
 main' :: Integer -> Integer -> IO ()
 main' n i = do
+  fileHandle <- openFile "pi.txt" AppendMode
   start <- milli
   let pi' = calcPi (fromIntegral i)
-  putStr $ (show i) ++ ": " ++ (show pi') ++ " in "
+  let str1 = (show i) ++ ": " ++ (show pi') ++ " in "
+  putStr str1
+  hPutStr fileHandle str1
   end <- milli
-  putStrLn (show (end - start) ++ "ms")
+  let str2 = show (end - start) ++ "ms"
+  putStrLn str2
+  hPutStrLn fileHandle str2
+  hClose fileHandle
   if n <= i
     then return ()
     else main' n (i+1)
